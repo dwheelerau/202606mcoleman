@@ -12,6 +12,12 @@ school prawn).
 ## 2. Transcript assembly  
 - rnaSPAdes
 
+Had a memory allocation issue that crashed it out on the second k-mer
+paramater run. See github issue thread `https://github.com/ablab/spades/issues/871#issuecomment-965639427`. I incrased the max map count to 262144 as 
+per the issue thread but AI recommends that this can be set higher. AI
+also says to reduce the thread count, which makes sense, so I reduced it
+from 100 to 24. See run1 logfile.    
+
 ## 3. Evaluate assembly with BUSCO in transcription mode
 - Animalia → Arthropoda → Crustacea → Decapoda → Penaeidae, so the natural first-choice lineage is arthropoda (or arthropoda_odb12  
 - arthropoda / arthropoda_odb12 primary report  
