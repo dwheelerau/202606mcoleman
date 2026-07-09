@@ -4,6 +4,12 @@
 Reference free RNAseq project. Check that the species is Metapenaeus macleayi (Eastern
 school prawn).  
 
+Closely related species with resources (according to AI *tryfirst):
+Penaeus monodon (black tiger shrimp) *
+Litopenaeus vannamei (Pacific white shrimp) *
+Fenneropenaeus chinensis
+Marsupenaeus japonicus
+
 ## 1. Raw data and QC  
 - fastqc  
 - multiqc  
@@ -40,7 +46,46 @@ can be considered to be: `TRINITY_DN25858_c0_g1_i1`.
 
 The actual assembled transcript assembles can be viewed with [bandage](https://rrwick.github.io/Bandage/).  
 
-## 3. Evaluate assembly with BUSCO in transcription mode
+## 3. Evaluating the assembly by mapping back the raw data  
+The trinity manual outlines a number of QC steps that can be taken to 
+check the quality of the assembly. The first is to map back raw reads to
+the assembled transcripts. The goal is to count the number of proper pairs,
+improper or orphan read alignments. These are the results from bowtie2 
+mapping.
+
+```
+cat logs/align_stats.txt 
+1423240957 reads; of these:
+  1423240957 (100.00%) were paired; of these:
+    159723489 (11.22%) aligned concordantly 0 times
+    58492468 (4.11%) aligned concordantly exactly 1 time
+    1205025000 (84.67%) aligned concordantly >1 times
+    ----
+    159723489 pairs aligned concordantly 0 times; of these:
+      441371 (0.28%) aligned discordantly 1 time
+    ----
+    159282118 pairs aligned 0 times concordantly or discordantly; of these:
+      318564236 mates make up the pairs; of these:
+        84476186 (26.52%) aligned 0 times
+        11101644 (3.48%) aligned exactly 1 time
+        222986406 (70.00%) aligned >1 times
+97.03% overall alignment rate
+```
+The manual states that we would expect a high proportion of reads to map
+to the assembly, in this case it is very high @ 97%. The manual also states
+proper pairs should map 1 or more times ~70-80%, in this case it is 84.7%. 
+There is high levels of duplication as indicated by the difference between
+the unique mapping versus multiple mapping statistics, however, the manual
+states that this is normally not an area of concern. But difference is
+large indicating a lot of redundancy, so we should keep this in mind 
+for subsequent steps (downstream analysis will take this redundancy into
+consideration.     
+
+Ultimately we can use this data to visualise the read mapping using
+IGV.  
+
+## 4. Evaluate assembly with BUSCO in transcription mode
+- use transdecoder based outputs for a protein busco with the longest orf.  
 - Animalia → Arthropoda → Crustacea → Decapoda → Penaeidae, so the natural first-choice lineage is arthropoda (or arthropoda_odb12  
 - arthropoda / arthropoda_odb12 primary report  
 - metazoa / metazoa_odb12
@@ -49,7 +94,6 @@ The actual assembled transcript assembles can be viewed with [bandage](https://r
 busco -i rnaspades_transcripts.fasta -m transcriptome -l arthropoda_odb12 -o busco_arthropoda -c 16 --force
 ```
 - may want to filter transcriptome to only include longest trans per loci ie remove alt splice redundancy.  
-- for the above I could use the transdecoder based outputs for a protein busco.  
 
 ## 4. Annotation of coding regions (optional at this stage) 
 Could leave this to after we have a list of DEGs to simplify the analysis

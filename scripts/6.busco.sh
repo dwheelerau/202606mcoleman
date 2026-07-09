@@ -11,3 +11,8 @@
 #--download_path busco-db
 ##
 busco -i transcripts.fa -m transcriptome -l "arthropoda_odb12.2" -o busco_out
+#busco \
+#    -i longest_gene_models.pep \
+#    -m proteins \
+#    -l arthropoda_odb10 \
+#    -c 16
