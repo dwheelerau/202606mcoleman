@@ -4,11 +4,11 @@
 Reference free RNAseq project. Check that the species is Metapenaeus macleayi (Eastern
 school prawn).  
 
-Closely related species with resources (according to AI *tryfirst):
-Penaeus monodon (black tiger shrimp) *
-Litopenaeus vannamei (Pacific white shrimp) *
-Fenneropenaeus chinensis
-Marsupenaeus japonicus
+Closely related species with resources (according to AI two marked as good):
+- Penaeus monodon (black tiger shrimp) **good**
+- Litopenaeus vannamei (Pacific white shrimp) **good**
+- Fenneropenaeus chinensis
+- Marsupenaeus japonicus
 
 ## 1. Raw data and QC  
 - fastqc  
@@ -16,7 +16,7 @@ Marsupenaeus japonicus
 - adaptor trimming?
 
 ## 2. Transcript assembly  
-- rnaSPAdes
+### rnaSPAdes
 
 Had a memory allocation issue that crashed it out on the second k-mer
 paramater run. See github issue thread `https://github.com/ablab/spades/issues/871#issuecomment-965639427`. I incrased the max map count to 262144 as 
@@ -24,6 +24,7 @@ per the issue thread but AI recommends that this can be set higher. AI
 also says to reduce the thread count, which makes sense, so I reduced it
 from 100 to 24. See run1 logfile. 
 
+### Trinity
 I still had issues with memory allocation, so I switched to Trinity. This
 ran successfully, generating a final assembled transcript file 
 `trinity.Trinity.fasta`. The output file is described [here](https://github.com/trinityrnaseq/trinityrnaseq/wiki/Output-of-Trinity-Assembly). Here is a description of the 
@@ -84,18 +85,42 @@ consideration.
 Ultimately we can use this data to visualise the read mapping using
 IGV.  
 
-## 4. Evaluate assembly with BUSCO in transcription mode
+## 4. Use transdecoder to obtain the open reading frames   
 - use transdecoder based outputs for a protein busco with the longest orf.  
-- Animalia → Arthropoda → Crustacea → Decapoda → Penaeidae, so the natural first-choice lineage is arthropoda (or arthropoda_odb12  
+- Use python to the xxxxx file to extract the longest peptide per trinity
+
+## 5. Use busco to assess the longest transcoder transcript per trinity gene
+Gene loci based on the fasta header clustering from Trinity.  
+
 - arthropoda / arthropoda_odb12 primary report  
-- metazoa / metazoa_odb12
+
 ```
+    ---------------------------------------------------
+    |Results from dataset arthropoda_odb12.2           |
+    ---------------------------------------------------
+    |C:96.2%[S:82.7%,D:13.5%],F:0.9%,M:2.9%,n:1332     |
+    |1281    Complete BUSCOs (C)                       |
+    |1101    Complete and single-copy BUSCOs (S)       |
+    |180    Complete and duplicated BUSCOs (D)         |
+    |12    Fragmented BUSCOs (F)                       |
+    |39    Missing BUSCOs (M)                          |
+    |1332    Total BUSCO groups searched               |
+    ---------------------------------------------------
+```
+- 96% complete buscos (83% single copy, 14% duplicated)  
+- 0.9 fragmented  
+- 3% missing  
+
+Some duplication but once again not concerning at this stage due to this
+being a transcriptome assembly.  
+
+
 # transcriptome mode
 busco -i rnaspades_transcripts.fasta -m transcriptome -l arthropoda_odb12 -o busco_arthropoda -c 16 --force
 ```
 - may want to filter transcriptome to only include longest trans per loci ie remove alt splice redundancy.  
 
-## 4. Annotation of coding regions (optional at this stage) 
+## 6. Annotation of coding regions (optional at this stage) 
 Could leave this to after we have a list of DEGs to simplify the analysis
 - TransDecoder
 - DIAMOND
