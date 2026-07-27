@@ -1,6 +1,6 @@
 #!/bin/bash 
 adapters="/home/wheeled/mambaforge/pkgs/bbmap-39.81-h9b5c0a0_1/share/bbmap/resources/adapters.fa"
-data="/home/wheeled/AGTC_WWAI_NAS/gROUPS/BioInformatics/dave/202606mcoleman/AGRF_NXGSQCAGRF26030040-1_23L5TCLT3"
+data="/home/wheeled/AGTC_WWAI_NAS/GROUPS/BioInformatics/dave/202606mcoleman/AGRF_NXGSQCAGRF26030040-1_23L5TCLT3"
 
 for r1 in $data/*_R1.fastq.gz
 do

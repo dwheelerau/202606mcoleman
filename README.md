@@ -13,16 +13,9 @@ Closely related species with resources (according to AI two marked as good):
 ## 1. Raw data and QC  
 - fastqc  
 - multiqc  
-- adaptor trimming?
+- adaptor trimming with bbduk see scripts  
 
 ## 2. Transcript assembly  
-### rnaSPAdes
-
-Had a memory allocation issue that crashed it out on the second k-mer
-paramater run. See github issue thread `https://github.com/ablab/spades/issues/871#issuecomment-965639427`. I incrased the max map count to 262144 as 
-per the issue thread but AI recommends that this can be set higher. AI
-also says to reduce the thread count, which makes sense, so I reduced it
-from 100 to 24. See run1 logfile. 
 
 ### Trinity
 I still had issues with memory allocation, so I switched to Trinity. This
@@ -126,8 +119,19 @@ Could leave this to after we have a list of DEGs to simplify the analysis
 - DIAMOND
 - eggNOG-mapper
 
-## 5. Salmon + tximport + edgeR  
-Referenc free RNAseq
+## 5. Salmon   
+(+ tximport + edgeR?)  
+See scripts directory. There are three lanes of data per sample, so these
+were combined using the salmon script. I had issues with `T1-16..L001` in
+that it caused a seg-fault issue with salmon. Only the L001 run of this sample
+caused issues, with L002 and L003 being processed correctly. I ran a number
+of quality checks on the R1 and R2 file for L001 but nothing was identified. I
+used `seqkit head` to iterate through the file increasing the number of reads 
+processed until I was able to trigger the seg-fault between reads 
+15,487,300 and 15,487,400. So I removed these 100 reads and re-ran the 
+script with no issues. For some technical details of what was done to fix
+the L001 sample see `adtrim/notes-t1-16-l001.txt`.   
+
 
 
 
