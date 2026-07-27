@@ -85,7 +85,8 @@ IGV.
 Gene loci based on the fasta header clustering from Trinity.  
 
 ### The results from arthropoda/arthropoda_odb12 primary report  
-
+Use the longest peptide per loci 
+`transdecoder_outdir/trinity.Trinity.fasta.transdecoder.longest_orf.pep` as input.    
 ```
     ---------------------------------------------------
     |Results from dataset arthropoda_odb12.2           |
