@@ -151,8 +151,92 @@ T1-20_quant     1 35790338    2.7481003 **EXTREME check**
 ....
 ```
 
-## 9. Annotation of coding regions (optional at this stage) 
+## 9. Use seqkit to filter out short proteins <100AAs  
+Just to remove noise, will remove some biologically real data
+but smaller peptides are going to be harder to annotate. Make note of 
+this for publication and if there is any biological reason to
+do it then try on the full dataset.  
+
+## 10. Annotation of coding regions (optional at this stage) 
 Could leave this to after we have a list of DEGs to simplify the analysis
 - TransDecoder
 - DIAMOND
 - eggNOG-mapper
+
+I had issues getting the datbases to download for eggNOG-mapper with the
+utility script `download_eggnog_data.py`. Instead I manually downloaded
+ these from
+`http://eggnog5.embl.de/download/emapperdb-5.0.2/` and moved them to
+a directory I created: /home/wheeled/mambaforge/envs/busco/lib/python3.12/site-packages/data
+I unzipped them in this directory.  
+
+CITATION:
+If you use this software, please cite:
+
+[1] eggNOG-mapper v2: functional annotation, orthology assignments, and domain 
+      prediction at the metagenomic scale. Carlos P. Cantalapiedra, 
+      Ana Hernandez-Plaza, Ivica Letunic, Peer Bork, Jaime Huerta-Cepas. 2021.
+      Molecular Biology and Evolution, msab293, https://doi.org/10.1093/molbev/msab293
+
+[2] eggNOG 5.0: a hierarchical, functionally and phylogenetically annotated
+      orthology resource based on 5090 organisms and 2502 viruses. Jaime
+      Huerta-Cepas, Damian Szklarczyk, Davide Heller, Ana Hernandez-Plaza,
+      Sofia K Forslund, Helen Cook, Daniel R Mende, Ivica Letunic, Thomas
+      Rattei, Lars J Jensen, Christian von Mering and Peer Bork. Nucleic Acids
+      Research, Volume 47, Issue D1, 8 January 2019, Pages D309-D314,
+      https://doi.org/10.1093/nar/gky1085 
+
+[3] Sensitive protein alignments at tree-of-life scale using DIAMOND.
+       Buchfink B, Reuter K, Drost HG. 2021.
+       Nature Methods 18, 366–368 (2021). https://doi.org/10.1038/s41592-021-01101-x
+
+e.g. Functional annotation was performed using eggNOG-mapper (version emapper-2.1.12-14d883f) [1]
+ based on eggNOG orthology data [2]. Sequence searches were performed using [3].
+
+## 11. RNAseq  
+From Curtis: Essentially, we simulated a flood event (i.e. salinity 
+decline and control) under two different temperatures (elevated and control) 
+and sampled prawns at two time points (early flood = T1, later flood = T2). 
+I will write the methods up formally over the next fortnight, but let me 
+know if you need any other info beyond what's in the sample sheet in the 
+meantime.
+
+The combination of factors make this a complex design.  
+
+### Experimental question  
+There are three scenarios.  
+
+1. Does the salinity response change over time, salinity x time. This would
+be asking are the genes responding to low salinity in response to flood the
+same over time, with temperature being a modifier of the response. 
+
+2. With reference to temperature, does a warming world change this response? 
+Does warmer temperatures change this salinity stress response? This
+would be salinity x temperature. In terms of biology, we could ask are 
+osmoregulatory genes robust to temperature increases from global warming? 
+Do immune response pathways degrade under higher temperatures, thus putting
+these prawns at increased risk of decline.     
+
+3. Finally, just the simple contrast. Which genes respond to salinity at
+at the two time perods under two temperature scenaios. These would be the
+core of any paper, but they become omre interesting with the other two 
+scenaros that tell a more detailed biological story.   
+
+### Step 1  
+Which genes respond to the simulated flood event within each temperature
+and time combination?    
+
+### Step 2 
+How does the flood response change from early to late stages (t1 to t2)?    
+
+### Step 3  
+Does elevated temperature alter the salinty response in prawns. Ie the 
+climate angle.   
+
+### Initial design  
+`design <- model.matrix( ~ Salinity * temperature * time)` to estimate
+all the interactions.   
+
+
+ 
+
