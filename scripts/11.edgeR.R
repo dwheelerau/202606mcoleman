@@ -83,6 +83,7 @@ cat(
 )
 
 # Norm using TMM
+# default method="TMM"
 dge <-calcNormFactors(dge)
 dge$samples
 
@@ -195,6 +196,14 @@ legend(
 )
 dev.off()
 
+
+pdf("edgeR/MDS2.pdf")
+plotMDS(
+	dge,
+	labels = meta$SampleID,
+	col = as.numeric(group)
+)
+dev.off()
 ##| Coefficient                                | Biological meaning                                                        |
 ##| ------------------------------------------ | ------------------------------------------------------------------------- |
 ##| SalinityDecline                            | Salinity effect alone                                                     |
@@ -220,10 +229,47 @@ design <- model.matrix(
 
 colnames(design)
 ##[1] "(Intercept)"
-##[2] "SalinityDecline"
-##[3] "TemperatureElevated"
-##[4] "TimeT2"
-##[5] "SalinityDecline:TemperatureElevated"
-##[6] "SalinityDecline:TimeT2"
-##[7] "TemperatureElevated:TimeT2"
-##[8] "SalinityDecline:TemperatureElevated:TimeT2"
+##[2] "SalinityDecline" - eff of declining salinity at control Time 1
+##[3] "TemperatureElevated" - eff elevated temp on control salinity at T1
+##[4] "TimeT2" - eff of T2 versus T1 under control salinity and cont temp
+##[5] "SalinityDecline:TemperatureElevated" - salintiy x temp at T1
+##[6] "SalinityDecline:TimeT2" - salinity x temp at T2
+##[7] "TemperatureElevated:TimeT2" does temp eff change T1 to T2 when salinity is control
+##[8] "SalinityDecline:TemperatureElevated:TimeT2" - does salinty x tep interaction change from T1 to T2
+
+# sanity check, col sums should be zero
+print("Should be zero")
+colSums(
+	is.na(
+		meta[, c("Salinity", "Temperature", "Time")]
+	)
+)
+print("every cell should be 3 for balanced design")
+with(
+	meta,
+	table(Salinity, Temperature, Time)
+)
+print("check contrasts are in correct order")
+contrasts(meta$Salinity)
+contrasts(meta$Temperature)
+contrasts(meta$Time)
+
+# disp and model est
+dge <- estimateDist(
+	dge,
+	design,
+	robust=TRUE
+)
+pdf("edgeR/BCV.pdf")
+plotBVC(dge)
+dev.off()
+
+fit <- glmQLFit(
+	dge,
+	design,
+	robust=TRUE
+)
+
+pdf("edgeR/QPFIT.pdf")
+plotQLDisp(fit)
+dev.off()
